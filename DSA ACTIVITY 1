@@ -1,0 +1,207 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct node
+{
+    string data;
+    node *next;
+};
+
+class linked_list
+{
+private:
+    node *head, *tail;
+
+public:
+    linked_list()
+    {
+        head = NULL;
+        tail = NULL;
+    }
+    
+    void insertAtBeginning(string value)
+    {
+        node *temp = new node;
+        temp->data = value;
+        temp->next = head;
+        head = temp;
+
+        if (tail == NULL)
+            tail = head;
+    }
+    
+    void insertAtEnd(string value)
+    {
+        node *temp = new node;
+        temp->data = value;
+        temp->next = NULL;
+
+        if (head == NULL)
+        {
+            head = temp;
+            tail = temp;
+        }
+        else
+        {
+            tail->next = temp;
+            tail = temp;
+        }
+    }
+    
+    void insertAfter(int position, string value)
+    {
+        node *temp = new node;
+        temp->data = value;
+        temp->next = nullptr;
+
+        if (position == 1)
+        {
+            temp->next = head;
+            head = temp;
+            if (tail == nullptr)
+                tail = temp;
+            return;
+        }
+
+        node *current = head;
+        int currentPosition = 1;
+
+        while (currentPosition < position - 1 && current != nullptr)
+        {
+            current = current->next;
+            currentPosition++;
+        }
+
+        if (current == nullptr)
+        {
+            cout << "POSITION EXCEEDS THE SIZE OF THE LIST.\n";
+            delete temp;
+            return;
+        }
+
+        temp->next = current->next;
+        current->next = temp;
+        if (temp->next == nullptr)
+            tail = temp;
+    }
+
+    void deleteNode(int position)
+    {
+        if (head == NULL)
+        {
+            cout << "NOTHING TO DELETE.\n";
+            return;
+        }
+
+        node *current = head;
+        node *previous = NULL;
+
+        for (int i = 1; i < position && current != NULL; i++)
+        {
+            previous = current;
+            current = current->next;
+        }
+
+        if (current == NULL)
+        {
+            cout << "POSITION EXCEEDS THE SIZE OF THE LIST.\n";
+            return;
+        }
+
+        if (previous == NULL)
+            head = current->next;
+        else
+            previous->next = current->next;
+
+        if (current == tail)
+            tail = previous;
+
+        delete current;
+    }
+
+    void printList()
+    {
+        node *temp = head;
+        int count = 1;
+    
+        while (temp != nullptr)
+        {
+            cout << "["<< count << "]: " << temp->data << "\n";
+            temp = temp->next;
+            count++;
+        }
+    
+        if (count == 1)
+        {
+            cout << "List is empty.\n";
+        }
+    }
+};
+
+int main()
+{
+    linked_list a;
+    int choice;
+    string value;
+    int position;
+    string position_value;
+
+    while (true)
+    {
+        cout << "\nMenu:\n";
+        cout << "1. Insert at the beginning\n";
+        cout << "2. Insert at the end\n";
+        cout << "3. Insert after a position\n";
+        cout << "4. Delete a node at a position\n";
+        cout << "5. Print the list\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            cout << "Enter value to insert at beginning: ";
+            cin >> value;
+            a.insertAtBeginning(value);
+            break;
+        case 2:
+            cout << "Enter value to insert at end: ";
+            cin >> value;
+            a.insertAtEnd(value);
+            break;
+        case 3:
+            cout << "Enter value to insert: ";
+            cin >> value;
+            cout << "Enter position to insert after (1-based index), or 'x' to cancel: ";
+            cin >> position_value;
+            if(position_value == "x")
+                break;
+            position = stoi(position_value);
+            a.insertAfter(position, value);
+            break;
+        case 4:
+            cout << "Enter position to delete (1-based index), or 'x' to cancel: ";
+            cin >> position_value;
+            if(position_value == "x")
+                break;
+            position = stoi(position_value);
+            a.deleteNode(position);
+            break;
+        case 5:
+            cout << "Linked list:\n";
+            a.printList();
+            break;
+        case 6:
+            cout << "EXITING THE PROGRAM\n";
+            return 0;
+        default:
+            cout << "INVALID CHOICE\n";
+            break;
+        }
+    }
+
+    return 0;
+}
